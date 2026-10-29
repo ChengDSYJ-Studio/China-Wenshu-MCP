@@ -1,0 +1,11 @@
+{
+  "doc_id": "替换为已入库文书ID",
+  "book": "minor_mentions",
+  "version": "1.0",
+  "variable": "mentions_minor",
+  "unit": 0,
+  "coder": "researcher_1",
+  "value": true,
+  "evidence": [{"paragraph": 1, "quote": "替换为该段落中的逐字引文"}],
+  "note": "人工复核"
+}

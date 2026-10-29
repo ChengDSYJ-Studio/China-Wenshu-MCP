@@ -1,0 +1,21 @@
+name: minor_mentions
+version: "1.0"
+description: 仅示范可核对的文本提及编码；不推断案件中是否实际存在未成年人。
+variables:
+  - name: mentions_minor
+    label: 提及未成年人
+    type: boolean
+    unit: document
+    description: 正文出现“未成年人”或“未满十八周岁”时为 true；未出现时为 false。
+    default: false
+    rules:
+      - pattern: 未成年人|未满十八周岁
+        value: true
+  - name: minor_paragraph
+    label: 涉及未成年人的段落
+    type: integer
+    unit: paragraph
+    description: 命中为 1；未命中保留缺失。
+    rules:
+      - pattern: 未成年人|未满十八周岁
+        value: 1

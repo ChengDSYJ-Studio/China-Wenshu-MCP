@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "wenshu": {
+      "command": "/完整路径/wenshu-mcp",
+      "args": ["serve"],
+      "env": {"WENSHU_DATA_DIR": "/完整路径/wenshu-data"}
+    }
+  }
+}

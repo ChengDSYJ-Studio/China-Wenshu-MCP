@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+"${GO:-go}" test -race ./...
+"${GO:-go}" vet ./...
+"${GO:-go}" build -trimpath -o bin/wenshu-mcp ./cmd/wenshu-mcp

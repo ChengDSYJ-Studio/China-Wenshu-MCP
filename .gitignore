@@ -1,0 +1,11 @@
+/bin/
+/dist/
+/data/
+/exports/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+session.json
+capture.json
+browser-profile/
+.DS_Store

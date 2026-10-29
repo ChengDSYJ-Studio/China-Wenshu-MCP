@@ -1,0 +1,11 @@
+{
+  "name": "未成年人文书采集示例",
+  "query": {
+    "keyword": "未成年人",
+    "start_date": "2020-01-01",
+    "end_date": "2020-01-01",
+    "sort": "s51:asc"
+  },
+  "fetch_body": true,
+  "page_size": 5
+}
