@@ -18,6 +18,7 @@
 | `wenshu_task_list` | 无 | 所有本地任务 |
 | `wenshu_task_shards` | `job_id` | 分片条件、计数、断点及原因 |
 | `wenshu_corpus_search` | `job_id?,keyword?,limit?,offset?` | 本地检索，默认 20 条，最多 10000 |
+| `wenshu_link_references` | `text,lookup_missing?,job_id?,max_lookups?` | 文书标题与案号的 Markdown 来源链接 |
 | `wenshu_codebook_import` | `path` | 导入 JSON/YAML codebook |
 | `wenshu_codebook_list` | 无 | 已导入 codebook |
 | `wenshu_code_apply` | `job_id?,book,version,coder?` | 规则编码计数与冲突列表 |

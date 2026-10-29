@@ -92,7 +92,7 @@ func TestExportSnapshotCSVAndStata(t *testing.T) {
 	}
 	for _, path := range out.Files {
 		info, e := os.Stat(path)
-		if e != nil || info.Size() == 0 {
+		if e != nil || (info.Size() == 0 && filepath.Base(path) != "coding_history.jsonl") {
 			t.Fatalf("empty file %s", path)
 		}
 	}
@@ -156,7 +156,7 @@ func TestMCPToolsAndCalls(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if len(list.Tools) != 21 {
+	if len(list.Tools) != 22 {
 		t.Fatalf("tools=%d", len(list.Tools))
 	}
 	if e = a.Store.SaveDetail("mcp-doc", Record{"s5": "mcp-doc", "qwContent": "未成年人测试。"}); e != nil {

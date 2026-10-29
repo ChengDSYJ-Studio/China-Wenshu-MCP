@@ -33,7 +33,7 @@ with tempfile.TemporaryDirectory(prefix="wenshu-mcp-smoke-") as data:
         p.stdin.write('{"jsonrpc":"2.0","method":"notifications/initialized"}\n')
         p.stdin.flush()
         tools = call("tools/list", {})["tools"]
-        assert len(tools) == 21
+        assert len(tools) == 22
         call("tools/call", {"name": "wenshu_session_status", "arguments": {}})
         call("tools/call", {"name": "wenshu_task_create", "arguments": {
             "name": "stdio test", "query": {"keyword": "测试"}, "fetch_body": False}})
@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix="wenshu-mcp-smoke-") as data:
         call("tools/call", {"name": "wenshu_export", "arguments": {
             "directory": str(Path(data) / "export")}})
         assert (Path(data) / "export" / "documents.dta").exists()
-        print("stdio initialize, 21 tools, session/task/export calls: PASS")
+        print("stdio initialize, 22 tools, session/task/export calls: PASS")
     finally:
         p.stdin.close()
         try:

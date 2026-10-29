@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const Version = "1.0"
+const Version = "1.1"
 const Endpoint = "https://wenshu.court.gov.cn/website/parse/rest.q4w"
 const ListURL = "https://wenshu.court.gov.cn/website/wenshu/181217BMTKHNT2W0/index.html"
 const DetailURL = "https://wenshu.court.gov.cn/website/wenshu/181107ANFZ0BXSK4/index.html?docId="

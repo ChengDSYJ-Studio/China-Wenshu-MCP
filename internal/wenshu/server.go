@@ -195,6 +195,7 @@ func (a *App) Server() *mcp.Server {
 		}
 		return a.Store.Corpus(in.JobID, in.Keyword, in.Limit, in.Offset)
 	})
+	addTool(s, "wenshu_link_references", "为文本中的《文书标题》和案号添加 Markdown 来源链接。优先精确匹配本地语料；lookup_missing=true 可联网定位文书。返回匹配结果、候选文书和链接。", func(ctx context.Context, in LinkOptions) (any, error) { return a.LinkReferences(ctx, in) })
 	addTool(s, "wenshu_codebook_import", "导入 JSON/YAML codebook；同名版本不可覆盖不同规则。", func(ctx context.Context, in pathInput) (any, error) { return a.Store.ImportCodebook(in.Path) })
 	addTool(s, "wenshu_codebook_list", "列出已安装 codebook 及其版本与变量定义。", func(ctx context.Context, in emptyInput) (any, error) { return a.Store.Codebooks() })
 	addTool(s, "wenshu_code_apply", "按 codebook 正则规则编码本地正文，返回冲突；不命中且无 default 时保留缺失。", func(ctx context.Context, in codeFilter) (any, error) {

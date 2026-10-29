@@ -2,13 +2,13 @@
 
 ![Wenshu MCP](docs/banner.svg)
 
-[![Version](https://img.shields.io/badge/version-1.0-1d5fd1?style=flat-square)](#主要功能)
+[![Version](https://img.shields.io/badge/version-1.1-1d5fd1?style=flat-square)](#主要功能)
 [![Go](https://img.shields.io/badge/Go-1.27.3-1d5fd1?style=flat-square&logo=go&logoColor=white)](go.mod)
 [![MCP](https://img.shields.io/badge/MCP-stdio-0b2c63?style=flat-square)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-21-0b2c63?style=flat-square)](#工具说明)
+[![Tools](https://img.shields.io/badge/tools-22-0b2c63?style=flat-square)](#工具说明)
 [![Storage](https://img.shields.io/badge/storage-SQLite-5b8def?style=flat-square)](#数据目录)
 
-**China Wenshu MCP · 中国裁判文书网 MCP · 1.0**
+**China Wenshu MCP · 中国裁判文书网 MCP · 1.1**
 
 [快速开始](#快速开始) · [使用示例](#使用示例) · [工具说明](#工具说明) · [采集流程](#采集流程) · [架构](#架构) · [配置](#配置) · [故障排查](#故障排查)
 
@@ -28,6 +28,7 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 - **正文与语料库**：保存原始列表和正文对象，生成段落编号与字符位置，支持本地中文子串检索。
 - **文书去重**：按稳定文书编号归档，合并重复记录并保留访问链接。
 - **Codebook 编码**：支持 JSON/YAML 规则、文书级和段落级编码、人工复核、原文证据、多编码员及规则版本。
+- **引用链接**：按文书标题和案号定位记录，为研究文本生成裁判文书来源链接。
 - **研究导出**：输出 CSV、原生 Stata 118、原始语料 JSONL、编码历史、字段说明和方法附录。
 
 发行包提供独立可执行程序，研究数据保存在本机 SQLite 语料库中。
@@ -36,16 +37,16 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 
 ### 1. 下载并解压
 
-从 [Releases](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/latest) 下载对应平台的 **1.0 完整发行包**：
+从 [Releases](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/latest) 下载对应平台的 **1.1 完整发行包**：
 
 | 系统 | 发行包 | 安装入口 |
 | --- | --- | --- |
-| macOS · Apple 芯片 | [wenshu-mcp-1.0-macOS-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-macOS-arm64.zip) | 双击 `安装设置.command` |
-| macOS · Intel | [wenshu-mcp-1.0-macOS-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-macOS-x64.zip) | 双击 `安装设置.command` |
-| Windows · x64 | [wenshu-mcp-1.0-Windows-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-Windows-x64.zip) | 双击 `安装设置.cmd` |
-| Windows · ARM64 | [wenshu-mcp-1.0-Windows-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-Windows-arm64.zip) | 双击 `安装设置.cmd` |
-| Linux · x64 | [wenshu-mcp-1.0-Linux-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-Linux-x64.zip) | 运行 `./安装设置.sh` |
-| Linux · ARM64 | [wenshu-mcp-1.0-Linux-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.0/wenshu-mcp-1.0-Linux-arm64.zip) | 运行 `./安装设置.sh` |
+| macOS · Apple 芯片 | [wenshu-mcp-1.1-macOS-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-macOS-arm64.zip) | 双击 `安装设置.command` |
+| macOS · Intel | [wenshu-mcp-1.1-macOS-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-macOS-x64.zip) | 双击 `安装设置.command` |
+| Windows · x64 | [wenshu-mcp-1.1-Windows-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-Windows-x64.zip) | 双击 `安装设置.cmd` |
+| Windows · ARM64 | [wenshu-mcp-1.1-Windows-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-Windows-arm64.zip) | 双击 `安装设置.cmd` |
+| Linux · x64 | [wenshu-mcp-1.1-Linux-x64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-Linux-x64.zip) | 运行 `./安装设置.sh` |
+| Linux · ARM64 | [wenshu-mcp-1.1-Linux-arm64.zip](https://github.com/ChengDSYJ-Studio/China-Wenshu-MCP/releases/download/v1.1/wenshu-mcp-1.1-Linux-arm64.zip) | 运行 `./安装设置.sh` |
 
 每个发行包都包含对应平台的可执行程序、安装向导、示例和文档。
 
@@ -58,15 +59,37 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 3. 把程序安装到数据目录，合并客户端配置；
 4. 连接 MCP 服务并显示已加载的工具数量。
 
-| 客户端 | 配置方式 |
-| --- | --- |
-| Codex | 自动写入 TOML 配置 |
-| Claude Desktop | 自动写入 JSON 配置 |
-| Claude Code | 自动写入全局 MCP 配置 |
-| Cursor | 自动写入 MCP 配置 |
-| Windsurf | 自动写入 MCP 配置 |
-| Gemini CLI | 自动合并设置 |
-| 通用 MCP 客户端 | 生成可导入的配置文件 |
+| 客户端选项 | 客户端 | 接入方式 |
+| --- | --- | --- |
+| `codex` | Codex | 自动配置 |
+| `claude-desktop` | Claude Desktop | 自动配置 |
+| `claude-code` | Claude Code | 自动配置 |
+| `cursor` | Cursor | 自动配置 |
+| `gemini` | Gemini CLI | 自动配置 |
+| `dsh-desktop` | DeepSeek Harness 桌面版 | 写入桌面版 profile |
+| `dsh-web` | DeepSeek Harness 网页版 | 写入网页版 profile |
+| `workbuddy` | WorkBuddy | 自动配置 |
+| `zcode` | ZCode | 自动配置 |
+| `kimi-code` | Kimi Code | 自动配置 |
+| `codebuddy` | CodeBuddy CLI | 自动配置 |
+| `qwen-code` | Qwen Code | 自动配置 |
+| `qoder-cli` | Qoder CLI | 自动配置 |
+| `qoder` | Qoder IDE | 导入链接 |
+| `trae` | Trae | 导入链接 |
+| `chatbox` | Chatbox | 导入链接 |
+| `cherry-studio` | Cherry Studio | 导入链接 |
+| `windsurf` | Windsurf | 自动配置 |
+| `trae-cn` | Trae CN | 配置片段 |
+| `lingma` | 通义灵码 | 配置片段 |
+| `codebuddy-ide` | CodeBuddy IDE | 配置片段 |
+| `comate` | 文心快码 Comate | 配置片段 |
+| `vscode` | VS Code / GitHub Copilot | 配置片段 |
+| `cline` | Cline | 配置片段 |
+| `roo` | Roo Code | 配置片段 |
+| `lobehub` | LobeHub / LobeChat | 配置片段 |
+| `generic` | 其他 stdio MCP 客户端 | 通用配置 |
+
+向导同时保存每个客户端的配置文件。DeepSeek Harness 使用各自已初始化的 profile；导入链接可直接打开对应客户端。配置片段附有导入位置说明，也可通过 `wenshu-mcp config 客户端选项` 单独输出。
 
 浏览器支持 Chrome、Edge、Chromium 和 Brave。配套浏览器下载默认使用 **npmmirror 国内镜像**，向导也提供官方源。可以通过 `--download-source` 或 `WENSHU_DOWNLOAD_SOURCE` 指定下载源。
 
@@ -98,11 +121,12 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 | 按第 18 段的原文保存一条人工编码 | `wenshu_code_put` |
 | 查看某位编码员的取值和证据 | `wenshu_codings` |
 | 导出这项任务的 CSV、Stata 数据和方法附录 | `wenshu_export` |
+| 为这段文字中的《文书标题》和案号补上来源链接 | `wenshu_link_references` |
 | 单独生成这项采集任务的方法说明 | `wenshu_methods` |
 
 ## 工具说明
 
-共 **21 个工具**。Codex 可能显示带命名空间的名称，例如 `mcp__wenshu__wenshu_search`。下面使用服务中的原始工具名。
+共 **22 个工具**。Codex 可能显示带命名空间的名称，例如 `mcp__wenshu__wenshu_search`。下面使用服务中的原始工具名。
 
 | 工具 | 说明 | 访问网站 |
 | --- | --- | :---: |
@@ -120,6 +144,7 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 | [`wenshu_task_list`](#wenshu_task_list) | 列出本地任务 | 否 |
 | [`wenshu_task_shards`](#wenshu_task_shards) | 查看分片条件、计数和断点 | 否 |
 | [`wenshu_corpus_search`](#wenshu_corpus_search) | 检索本地语料 | 否 |
+| [`wenshu_link_references`](#wenshu_link_references) | 为文书标题和案号生成引用链接 | 按参数 |
 | [`wenshu_codebook_import`](#wenshu_codebook_import) | 导入 JSON/YAML codebook | 否 |
 | [`wenshu_codebook_list`](#wenshu_codebook_list) | 列出规则及版本 | 否 |
 | [`wenshu_code_apply`](#wenshu_code_apply) | 按规则编码，报告冲突 | 否 |
@@ -313,6 +338,38 @@ Wenshu MCP 是在本机运行的中国裁判文书网 [MCP](https://modelcontext
 
 返回文书摘要和元数据。需要全文与段落时，继续调用 `wenshu_document`。
 
+### wenshu_link_references
+
+为文本中的《文书标题》和案号生成 Markdown 来源链接。默认使用本地语料，可选择联网定位引用。
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `text` | 必填 | 引用文本，最多 512 KB、100 处引用 |
+| `lookup_missing` | `false` | 联网查找本地未匹配的引用 |
+| `job_id` | 全库 | 限定本地匹配范围 |
+| `max_lookups` | 10 | 本次联网查找次数上限，1–100 |
+
+支持嵌套书名号、全角和半角案号，保留原有 Markdown 链接及代码格式。同名或同案号的多篇文书会返回候选记录，供进一步选择。
+
+```json
+{
+  "text": "参见《甲与乙民事判决书》及（2020）京0105民初123号。",
+  "lookup_missing": true
+}
+```
+
+返回替换后的 `text`、逐项匹配的 `references` 和实际联网次数 `lookups`。每项引用包含文书编号、链接及匹配状态：
+
+| 状态 | 含义 |
+| --- | --- |
+| `linked` | 已生成链接 |
+| `ambiguous` | 有多个候选文书 |
+| `unresolved` | 待定位的引用 |
+| `matched_without_link` | 已匹配记录，链接待补充 |
+| `lookup_incomplete` | 可进一步细化标题或案号 |
+| `lookup_limit` | 可在下一次调用继续定位 |
+| `lookup_error` | 联网查找需要重试 |
+
 ### wenshu_codebook_import
 
 `path` 指向 JSON 或 YAML 文件。Codebook 至少包含 `name`、`version`、`variables`。
@@ -476,12 +533,13 @@ flowchart LR
 
 | 模块 | 文件 | 职责 |
 | --- | --- | --- |
-| MCP 入口 | [server.go](internal/wenshu/server.go) | 注册 21 个工具及参数 |
+| MCP 入口 | [server.go](internal/wenshu/server.go) | 注册 22 个工具及参数 |
 | HTTP 客户端 | [client.go](internal/wenshu/client.go)、[crypto.go](internal/wenshu/crypto.go) | 请求、重试、状态检查、参数生成与解密 |
 | 登录与会话 | [login.go](internal/wenshu/login.go)、[session.go](internal/wenshu/session.go) | 登录窗口、会话保存和导入 |
 | 采集任务 | [engine.go](internal/wenshu/engine.go) | 分片、后台执行、暂停与恢复 |
 | 本地存储 | [store.go](internal/wenshu/store.go)、[identity.go](internal/wenshu/identity.go) | 事务、文书归并、别名、任务锁 |
 | 正文处理 | [text.go](internal/wenshu/text.go) | HTML 文本、段落和字符位置 |
+| 引用链接 | [links.go](internal/wenshu/links.go) | 标题与案号定位、Markdown 链接 |
 | 编码 | [codebook.go](internal/wenshu/codebook.go) | 规则、人工编码、证据与版本 |
 | 导出 | [export.go](internal/wenshu/export.go)、[stata.go](internal/wenshu/stata.go) | 一致快照、表格、Stata 与附录 |
 | 命令行 | [main.go](cmd/wenshu-mcp/main.go) | 独立运行及文件操作入口 |
@@ -598,6 +656,8 @@ go build -trimpath -o bin/wenshu-mcp.exe ./cmd/wenshu-mcp
 | 命令 | 用途 |
 | --- | --- |
 | `setup` | 安装向导、浏览器配置与客户端接入 |
+| `config CLIENT` | 输出指定客户端的配置 |
+| `link-references` | 为文本中的文书引用生成链接 |
 | `serve` | 启动 stdio MCP，默认命令 |
 | `login`、`auth-import`、`session-status` | 登录与会话 |
 | `search`、`facets`、`dictionary` | 网站查询与字典 |

@@ -44,22 +44,9 @@ type SetupOptions struct {
 	Browser        string
 	DownloadSource string
 	ConfigPath     string
+	OpenLinks      bool
 }
-type clientTarget struct{ ID, Name, Path, Format string }
 
-func clientTargets(home, goos, appData string) []clientTarget {
-	claude := filepath.Join(home, ".config", "Claude", "claude_desktop_config.json")
-	if goos == "darwin" {
-		claude = filepath.Join(home, "Library", "Application Support", "Claude", "claude_desktop_config.json")
-	}
-	if goos == "windows" {
-		if appData == "" {
-			appData = filepath.Join(home, "AppData", "Roaming")
-		}
-		claude = filepath.Join(appData, "Claude", "claude_desktop_config.json")
-	}
-	return []clientTarget{{"codex", "Codex", filepath.Join(home, ".codex", "config.toml"), "toml"}, {"claude-desktop", "Claude Desktop", claude, "json"}, {"claude-code", "Claude Code", filepath.Join(home, ".claude.json"), "json"}, {"cursor", "Cursor", filepath.Join(home, ".cursor", "mcp.json"), "json"}, {"windsurf", "Windsurf", filepath.Join(home, ".codeium", "windsurf", "mcp_config.json"), "json"}, {"gemini", "Gemini CLI", filepath.Join(home, ".gemini", "settings.json"), "json"}, {"generic", "通用 MCP 配置", "", "json"}}
-}
 func choose(in *bufio.Reader, out io.Writer, prompt, def string) (string, error) {
 	fmt.Fprintf(out, "%s [%s]: ", prompt, def)
 	s, e := in.ReadString('\n')
@@ -205,16 +192,56 @@ func RunSetup(ctx context.Context, dataDir string, in io.Reader, out io.Writer, 
 	}
 	fmt.Fprintf(out, "MCP 已就绪，已加载 %d 个工具。\n", count)
 	for _, t := range selected {
-		if t.ID == "generic" && t.Path == "" {
-			t.Path = filepath.Join(dir, "wenshu-mcp-config.json")
-		}
-		backup, e := mergeClientConfig(t.Path, t.Format, exe, dir)
+		snippet, e := configSnippet(t, exe, dir)
 		if e != nil {
-			return fmt.Errorf("写入 %s 配置失败: %w", t.Name, e)
+			return e
 		}
-		fmt.Fprintf(out, "已接入 %s：%s\n", t.Name, t.Path)
-		if backup != "" {
-			fmt.Fprintf(out, "原配置备份：%s\n", backup)
+		snippetPath := filepath.Join(dir, "wenshu-"+t.ID+"."+t.extension())
+		if e = atomicWrite(snippetPath, snippet); e != nil {
+			return e
+		}
+		fmt.Fprintf(out, "%s 配置：%s\n", t.Name, snippetPath)
+		canWrite := t.Path != ""
+		if t.NeedDir {
+			if info, err := os.Stat(filepath.Dir(t.Path)); err != nil || !info.IsDir() {
+				canWrite = false
+			}
+		}
+		if canWrite {
+			var backup string
+			if t.Format == "dsh" {
+				backup, e = mergeDSH(t.Path, exe, dir)
+			} else {
+				backup, e = mergeClientTarget(t, exe, dir)
+			}
+			if e != nil {
+				return fmt.Errorf("写入 %s 配置失败（配置片段已保存）：%w", t.Name, e)
+			}
+			fmt.Fprintf(out, "已接入 %s：%s\n", t.Name, t.Path)
+			if backup != "" {
+				fmt.Fprintf(out, "原配置备份：%s\n", backup)
+			}
+		} else {
+			fmt.Fprintln(out, t.ImportHint)
+			if uri := clientImportURL(t, exe, dir); uri != "" {
+				fmt.Fprintf(out, "导入链接：%s\n", uri)
+				if e = atomicWrite(filepath.Join(dir, "wenshu-"+t.ID+".url.txt"), []byte(uri+"\n")); e != nil {
+					return e
+				}
+				open := opt.OpenLinks
+				if interactive {
+					answer, err := choose(reader, out, "打开 "+t.Name+" 导入页面？y/n", "y")
+					if err != nil {
+						return err
+					}
+					open = strings.EqualFold(answer, "y")
+				}
+				if open {
+					if e = openClientImport(ctx, uri); e != nil {
+						fmt.Fprintf(out, "请从配置文件导入：%s\n", snippetPath)
+					}
+				}
+			}
 		}
 	}
 	fmt.Fprintln(out, "\n安装完成。重载客户端 MCP 服务，然后对 AI 说：帮我登录裁判文书网。")
@@ -286,6 +313,10 @@ func checkInstalledMCP(ctx context.Context, exe, dir string) (int, error) {
 }
 
 func mergeClientConfig(path, format, exe, dir string) (string, error) {
+	return mergeClientTarget(clientTarget{Path: path, Format: format}, exe, dir)
+}
+func mergeClientTarget(t clientTarget, exe, dir string) (string, error) {
+	path, format := t.Path, t.Format
 	raw, e := os.ReadFile(path)
 	exists := e == nil
 	if e != nil && !os.IsNotExist(e) {
@@ -302,17 +333,21 @@ func mergeClientConfig(path, format, exe, dir string) (string, error) {
 			return "", fmt.Errorf("原配置格式错误: %w", e)
 		}
 	}
-	key := "mcpServers"
+	key := t.serverKey()
 	if format == "toml" {
 		key = "mcp_servers"
 	}
-	servers, ok := original[key].(map[string]any)
-	if !ok && original[key] != nil {
-		return "", fmt.Errorf("%s 不是配置对象", key)
-	}
-	if servers == nil {
-		servers = map[string]any{}
-		original[key] = servers
+	servers := original
+	for _, part := range strings.Split(key, ".") {
+		next, ok := servers[part].(map[string]any)
+		if !ok && servers[part] != nil {
+			return "", fmt.Errorf("%s 不是配置对象", part)
+		}
+		if next == nil {
+			next = map[string]any{}
+			servers[part] = next
+		}
+		servers = next
 	}
 	entry, ok := servers["wenshu"].(map[string]any)
 	if !ok && servers["wenshu"] != nil {
@@ -320,6 +355,14 @@ func mergeClientConfig(path, format, exe, dir string) (string, error) {
 	}
 	if entry == nil {
 		entry = map[string]any{}
+	}
+	for _, key := range []string{"url", "http_headers", "env_http_headers", "bearer_token_env_var", "oauth", "headers"} {
+		delete(entry, key)
+	}
+	for key, value := range t.Extra {
+		if entry[key] == nil || key == "type" {
+			entry[key] = value
+		}
 	}
 	entry["command"] = exe
 	entry["args"] = []string{"serve"}
@@ -334,6 +377,12 @@ func mergeClientConfig(path, format, exe, dir string) (string, error) {
 	entry["env"] = env
 	if format == "toml" {
 		entry["enabled"] = true
+		if entry["startup_timeout_sec"] == nil {
+			entry["startup_timeout_sec"] = 30
+		}
+		if entry["tool_timeout_sec"] == nil {
+			entry["tool_timeout_sec"] = 900
+		}
 	}
 	servers["wenshu"] = entry
 	var output []byte

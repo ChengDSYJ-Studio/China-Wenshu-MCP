@@ -22,6 +22,8 @@ const help = `wenshu-mcp — 裁判文书网 HTTP 采集与本地研究工具
 不指定 COMMAND 时启动 stdio MCP 服务。全局选项放在 COMMAND 前。
 
 setup                    安装向导：选择客户端、配置浏览器、自动接入
+config CLIENT            输出指定客户端的 MCP 配置
+link-references --text TEXT [--lookup-missing] [--job ID]
 serve                    启动 MCP（stdio）
 auth-import --file PATH  导入现有 probe capture / storage state / Cookie
 login [--chrome PATH]    打开登录浏览器并保存会话
@@ -105,17 +107,37 @@ func run() error {
 	defer stop()
 	if cmd == "setup" {
 		f := flag.NewFlagSet("setup", flag.ContinueOnError)
-		clients := f.String("client", "", "codex/claude-desktop/claude-code/cursor/windsurf/gemini/generic，可用逗号分隔")
+		clients := f.String("client", "", "客户端 ID，可用逗号分隔多个客户端；运行 setup 查看列表")
 		browser := f.String("browser", "", "登录浏览器路径")
 		source := f.String("download-source", "", "cn（国内镜像）、official 或自定义镜像根地址")
 		configPath := f.String("config-path", "", "客户端配置文件路径")
+		openLinks := f.Bool("open-links", false, "打开客户端导入链接")
 		if e := f.Parse(args); e != nil {
 			return e
 		}
 		if len(f.Args()) > 0 {
 			return fmt.Errorf("无法识别的参数 %v", f.Args())
 		}
-		return wenshu.RunSetup(ctx, *data, os.Stdin, os.Stdout, wenshu.SetupOptions{Clients: *clients, Browser: *browser, DownloadSource: *source, ConfigPath: *configPath})
+		return wenshu.RunSetup(ctx, *data, os.Stdin, os.Stdout, wenshu.SetupOptions{Clients: *clients, Browser: *browser, DownloadSource: *source, ConfigPath: *configPath, OpenLinks: *openLinks})
+	}
+	if cmd == "config" {
+		if len(args) != 1 {
+			return fmt.Errorf("用法：wenshu-mcp config CLIENT")
+		}
+		exe, e := os.Executable()
+		if e != nil {
+			return e
+		}
+		dir, e := filepath.Abs(*data)
+		if e != nil {
+			return e
+		}
+		b, e := wenshu.ClientConfig(args[0], exe, dir)
+		if e != nil {
+			return e
+		}
+		_, e = os.Stdout.Write(b)
+		return e
 	}
 	a, e := wenshu.OpenApp(ctx, *data)
 	if e != nil {
@@ -287,6 +309,26 @@ func run() error {
 			return e
 		}
 		out, e = a.Store.Corpus(*id, *word, *limit, *offset)
+	case "link-references":
+		text := f.String("text", "", "引用文本")
+		file := f.String("file", "", "读取引用文本的文件")
+		lookup := f.Bool("lookup-missing", false, "联网定位本地未匹配的引用")
+		job := f.String("job", "", "本地查找的任务范围")
+		max := f.Int("max-lookups", 10, "本次联网查找次数上限")
+		if e = parse(); e != nil {
+			return e
+		}
+		if *file != "" {
+			if *text != "" {
+				return fmt.Errorf("text 与 file 选择一种输入方式")
+			}
+			b, err := os.ReadFile(*file)
+			if err != nil {
+				return err
+			}
+			*text = string(b)
+		}
+		out, e = a.LinkReferences(ctx, wenshu.LinkOptions{Text: *text, LookupMissing: *lookup, JobID: *job, MaxLookups: *max})
 	case "codebook-import":
 		file := f.String("file", "", "JSON/YAML 文件")
 		if e = parse(); e != nil {

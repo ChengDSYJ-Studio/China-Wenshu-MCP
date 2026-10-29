@@ -2,7 +2,7 @@
 
 ## 三步开始
 
-1. 下载对应系统与架构的 1.0 发行包并解压。
+1. 下载对应系统与架构的 1.1 发行包并解压。
 2. macOS 双击 `安装设置.command`，Windows 双击 `安装设置.cmd`；Linux 运行 `./安装设置.sh`。
 3. 在向导中选择客户端，完成后重载客户端的 MCP 服务，对 AI 说“帮我登录裁判文书网”。
 
@@ -14,7 +14,17 @@
 - 合并客户端配置，保留既有服务并备份原配置。
 - 通过实际 MCP 握手读取工具清单，显示服务已就绪。
 
-支持自动配置 Codex、Claude Desktop、Claude Code、Cursor、Windsurf、Gemini CLI。选择“通用 MCP 配置”会生成可导入的 JSON 文件。
+安装向导支持 27 类客户端。Codex、Claude Desktop、Claude Code、Cursor、Gemini、WorkBuddy、ZCode、Kimi Code、CodeBuddy CLI、Qwen Code、Qoder CLI、Windsurf 可自动配置。DeepSeek Harness 的桌面版与网页版分别使用对应 profile 的 YAML 配置。
+
+Qoder IDE、Trae、Chatbox、Cherry Studio 提供导入链接。其他客户端会生成对应格式的配置片段，并显示导入位置。完整客户端选项见 [README](../README.md#快速开始)。
+
+每份配置保存为 `wenshu-客户端选项.json`，Codex 使用 `.toml`，DeepSeek Harness 使用 `.yaml`。也可单独输出：
+
+```sh
+./wenshu-mcp config vscode
+./wenshu-mcp config dsh-desktop
+./wenshu-mcp setup --client qoder,cherry-studio --open-links
+```
 
 ## 国内镜像
 

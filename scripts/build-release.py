@@ -2,13 +2,14 @@
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import os
+import re
 import shutil
 import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 GO = os.environ.get("GO", "go")
-VERSION = "1.0"
+VERSION = re.search(r'const Version = "([^"]+)"', (ROOT / "internal/wenshu/model.go").read_text()).group(1)
 TARGETS = [("darwin", "arm64", "macOS-arm64"), ("darwin", "amd64", "macOS-x64"),
            ("windows", "amd64", "Windows-x64"), ("windows", "arm64", "Windows-arm64"),
            ("linux", "amd64", "Linux-x64"), ("linux", "arm64", "Linux-arm64")]

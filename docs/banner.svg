@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
-  <title id="title">Wenshu MCP · 裁判文书网 MCP 1.0</title>
+  <title id="title">Wenshu MCP · 裁判文书网 MCP 1.1</title>
   <desc id="desc">本地运行的裁判文书检索、HTTP 采集、语料编码与研究导出服务。</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -25,9 +25,9 @@
     <text x="218" y="160" fill="#bfdbff" font-size="27" font-weight="500">裁判文书网 MCP</text>
     <text x="218" y="199" fill="#92b6df" font-size="18">HTTP 采集 · 断点续采 · 本地语料 · 研究编码</text>
     <rect x="1024" y="42" width="112" height="38" rx="19" fill="#d7e9ff"/>
-    <text x="1080" y="68" text-anchor="middle" fill="#123765" font-size="19" font-weight="700">1.0</text>
+    <text x="1080" y="68" text-anchor="middle" fill="#123765" font-size="19" font-weight="700">1.1</text>
     <path d="M64 252h1072" stroke="#5b8fc8" stroke-opacity=".35"/>
-    <text x="64" y="286" fill="#d7e9ff" font-size="17">21 个 MCP 工具</text>
+    <text x="64" y="286" fill="#d7e9ff" font-size="17">22 个 MCP 工具</text>
     <text x="344" y="286" fill="#d7e9ff" font-size="17">SQLite 本地存储</text>
     <text x="650" y="286" fill="#d7e9ff" font-size="17">Codebook 编码</text>
     <text x="944" y="286" fill="#d7e9ff" font-size="17">CSV / Stata 导出</text>
